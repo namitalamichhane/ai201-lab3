@@ -70,58 +70,80 @@ debate-openers, and requests for explanation.
 
 ## 3. Hard Edge Cases
 
-### The framework-without-metrics problem
-**The ambiguous post type:** Posts that describe a real investment thesis using 
-general frameworks ("capital rotation," "sector strength," "undervalued relative 
-to peers") but cite no specific verifiable metrics. These sound like analysis 
-but lack checkable evidence.
+### Case 1: Structured presentation without real numbers
+**Post type:** Snapchat/Dotmo spinoff analysis with bullet points  
+**Labels it sat between:** `analysis` vs `discussion`
 
-**Real example from browsing:**
-> "When I first discovered TSEM, it was in a post-rally pullback. Based on 
-> earnings season dynamics and capital flow patterns, I started building a 
-> position. My view was that capital would rotate into undervalued names that 
-> hadn't yet moved. That was the setup I positioned for."
+The post used financial terminology (zero-funding structure, equity retention, 
+SBC removal, margin impact) arranged as a chain of cause-and-effect reasoning, 
+which made it look like analysis. But no actual figures were cited — no cost 
+savings quantified, no margin percentages named. The structured presentation 
+fooled me into seeing reasoning that wasn't fully there.
 
-**Decision rule:** If I can fact-check the claims made, it's `analysis`. If the 
-reasoning is a framework or narrative with no specific numbers attached, it's 
-`speculation`. The test: would the argument collapse if I removed the numbers? 
-If there are no numbers to remove, it's speculation.
+**Note:** This case was mislabeled in the final dataset as `analysis` 
+and was corrected to `discussion` after reflection.
 
-### The news-with-a-take problem
-**The ambiguous post type:** Posts that share a news article but add a brief 
-opinion or prediction. Is it `discussion` (because it's primarily news) or 
-`speculation` (because it adds a directional claim)?
+**Decision:** Labeled `analysis`, but on reflection should be `discussion`. 
 
-**Decision rule:** Label by the dominant content. If the post is primarily 
-sharing news and the opinion is a sentence or two of reaction, label it 
-`discussion`. If the opinion is the main point and the news is cited as 
-supporting context, label it `speculation`.
+**Decision rule going forward:** Structured formatting and financial terminology 
+alone do not qualify a post as analysis. There must be at least one specific, 
+quantified, verifiable figure doing real argumentative work.
+
+---
+
+### Case 2: Evidence present, reasoning step absent
+**Post type:** ACN "K-shaped market" macro post  
+**Labels it sat between:** `analysis` vs `speculation`
+
+The post cited ACN's P/E of 13x and a >60% YTD decline — real, checkable 
+numbers that pulled toward analysis. But the author explicitly disclaimed 
+investing in the stock, drew no investment conclusion from those figures, and 
+used them only to float a vague "K-shaped market" narrative. The evidence was 
+present but the reasoning step — using that evidence to argue toward a 
+conclusion — was absent.
+
+**Decision:** Labeled `speculation`.
+
+**Decision rule going forward:** Both parts of the analysis definition must be 
+present — specific verifiable evidence AND a conclusion reasoned from that 
+evidence. Evidence used decoratively to support a vague narrative does not 
+qualify.
+
+---
+
+### Case 3: Advice request with a directional claim embedded
+**Post type:** "Portfolio suggestions long term" advice request  
+**Labels it sat between:** `discussion` vs `speculation`
+
+The post felt like a discussion (asking for advice, personal situation), but 
+the author made a confident directional claim that space, semiconductors, and 
+batteries would outperform the S&P without citing any supporting data. The 
+claim tipped it past neutral discussion into an unverifiable directional 
+assertion.
+
+**Decision:** Labeled `speculation`. This is the thinnest of the three calls 
+and reasonable to argue either way.
+
+**Decision rule going forward:** If a post is primarily an advice request but 
+contains a confident directional claim about future performance with no 
+supporting evidence, label by the directional claim — `speculation` — not by 
+the conversational framing.
 
 ---
 
 ## 4. Data Collection Plan
 
-**Source:** r/stocks on Reddit, collected manually by browsing posts sorted 
-by Hot, Top (This Month), and Top (This Year).
+**Actual collection method:** Scraped using Reddit's RSS feed and JSON 
+endpoints via Python locally, after Reddit's API blocked Colab requests 
+with 403 errors. Supplemented with targeted searches for DD, valuation, 
+and earnings posts from r/stocks and r/SecurityAnalysis.
 
-**Target distribution:**
-- `analysis`: 70 examples (35%)
-- `speculation`: 65 examples (32.5%)
-- `discussion`: 65 examples (32.5%)
-
-**Where to find each label:**
-- `analysis`: Search "DD" posts, sort by Top All Time, look for long-form posts 
-  with specific metrics
-- `speculation`: Hot feed, posts with strong directional claims, macro posts
-- `discussion`: Daily discussion thread, advice request posts, news reposts
-
-**If a label is underrepresented after 150 examples:** I will specifically 
-search for that label type before continuing general collection. For `analysis` 
-specifically, I will search r/stocks for "DD" or "due diligence" to find 
-concentrated examples.
-
-**Format:** Single CSV with columns: text, label, notes
-
+**Final distribution achieved:**
+- `analysis`: 75 examples (34%)
+- `speculation`: 82 examples (38%)
+- `discussion`: 61 examples (28%)
+- **Total: 218 examples**
+  
 ---
 
 ## 5. Evaluation Metrics
@@ -178,3 +200,8 @@ After fine-tuning, I will paste my full list of misclassified test examples
 into Claude and ask it to identify common patterns (post length, vague language, 
 sarcasm, specific label pairs). I will then verify each suggested pattern by 
 re-reading the examples myself before including it in my evaluation report.
+
+### Annotation assistance
+Used Claude to pre-label batches of 20–30 posts at a time. Reviewed and 
+corrected every pre-assigned label individually. Pre-labeled examples are 
+tracked with "pre-labeled" in the notes column.
